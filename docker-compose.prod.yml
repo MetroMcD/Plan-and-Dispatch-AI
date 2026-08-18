@@ -1,0 +1,64 @@
+# Diese Datei zieht das fertige Image aus der Registry und baut NICHT
+# aus dem Quellcode. Erzeugt aus dem Entwicklungsrepository.
+# Plan & Dispatch — Produktiv-Setup hinter Cloudflare Tunnel.
+#
+# Unterschied zu docker-compose.yml:
+#   • KEIN Caddy (Cloudflare übernimmt TLS)
+#   • KEINE veröffentlichten Ports — die VM öffnet nichts nach außen.
+#     cloudflared baut eine AUSGEHENDE Verbindung zu Cloudflare auf und
+#     erreicht die App intern über das Compose-Netz als http://dispatcher:5050.
+#
+# Cloudflare-Tunnel (Dashboard → Zero Trust → Networks → Tunnels):
+#   Public Hostname:  dispatch.deinedomain.de
+#   Service:          HTTP  →  dispatcher:5050
+#   Den Tunnel-Token als TUNNEL_TOKEN in die .env eintragen.
+#
+# Start:  docker compose -f docker-compose.prod.yml up -d --build
+
+services:
+  dispatcher:
+    image: ${IMAGE:-metromcd/plan-and-dispatch-ai:latest}
+    # Bewusst KEIN ports:-Block — nur intern über das Compose-Netz erreichbar.
+    volumes:
+      - dispatcher-data:/data
+    environment:
+      - SECRET_KEY=${SECRET_KEY:-}
+      - ADMIN_USER=${ADMIN_USER:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:?bitte in der .env setzen — siehe .env.example}
+      # Hinter dem Cloudflare-Tunnel gibt es ausschließlich https — hier ist
+      # SESSION_COOKIE_SECURE=1 in der .env empfehlenswert. Der Default bleibt
+      # bewusst 0, damit ein Update das Anmeldeverhalten nicht still verändert.
+      - SESSION_COOKIE_SECURE=${SESSION_COOKIE_SECURE:-0}
+      # Auch die App legt Sicherungen an (Admin → Datenbank) und räumt dabei auf
+      - BACKUP_KEEP_DAYS=${BACKUP_KEEP_DAYS:-14}
+      - BACKUP_KEEP_MANUAL=${BACKUP_KEEP_MANUAL:-10}
+      - TZ=${TZ:-Europe/Berlin}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  backup:
+    image: ${IMAGE:-metromcd/plan-and-dispatch-ai:latest}
+    command: ["python", "backup.py"]
+    healthcheck:
+      disable: true
+    volumes:
+      - dispatcher-data:/data
+    environment:
+      - BACKUP_HOUR=${BACKUP_HOUR:-2}
+      - BACKUP_KEEP_DAYS=${BACKUP_KEEP_DAYS:-14}
+      - BACKUP_KEEP_MANUAL=${BACKUP_KEEP_MANUAL:-10}
+      - TZ=${TZ:-Europe/Berlin}
+    restart: unless-stopped
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: ["tunnel", "--no-autoupdate", "run"]
+    environment:
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN:-}
+    depends_on:
+      - dispatcher
+    restart: unless-stopped
+
+volumes:
+  dispatcher-data:

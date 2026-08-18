@@ -1,0 +1,56 @@
+# Diese Datei zieht das fertige Image aus der Registry und baut NICHT
+# aus dem Quellcode. Erzeugt aus dem Entwicklungsrepository.
+# Plan & Dispatch — Produktiv-Setup (drei Services: App, Backup, TLS-Proxy).
+# Konfiguration über .env (Vorlage: .env.example). Ohne .env gelten die
+# Standardwerte unten (${VAR:-default}).
+
+services:
+  dispatcher:
+    image: ${IMAGE:-metromcd/plan-and-dispatch-ai:latest}
+    ports:
+      - "${HTTP_PORT:-5050}:5050"
+    volumes:
+      - dispatcher-data:/data
+    environment:
+      # SECRET_KEY: wenn nicht gesetzt, wird einmalig einer generiert und in /data persistiert
+      - SECRET_KEY=${SECRET_KEY:-}
+      # nur für den allerersten Start relevant — danach im Admin-Bereich pflegen
+      - ADMIN_USER=${ADMIN_USER:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:?bitte in der .env setzen — siehe .env.example}
+      # nur einschalten, wenn ausschließlich über https zugegriffen wird (s. .env.example)
+      - SESSION_COOKIE_SECURE=${SESSION_COOKIE_SECURE:-0}
+      # Auch die App legt Sicherungen an (Admin → Datenbank) und räumt dabei auf —
+      # sie braucht dieselbe Aufbewahrungsregel wie der backup-Service
+      - BACKUP_KEEP_DAYS=${BACKUP_KEEP_DAYS:-14}
+      - BACKUP_KEEP_MANUAL=${BACKUP_KEEP_MANUAL:-10}
+      - TZ=${TZ:-Europe/Berlin}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # nötig auf Linux, damit z.B. LM Studio auf dem Host erreichbar ist
+    restart: unless-stopped
+
+  backup:
+    image: ${IMAGE:-metromcd/plan-and-dispatch-ai:latest}
+    command: ["python", "backup.py"]
+    healthcheck:
+      disable: true   # kein Webserver — der HEALTHCHECK aus dem Image passt hier nicht
+    volumes:
+      - dispatcher-data:/data
+    environment:
+      - BACKUP_HOUR=${BACKUP_HOUR:-2}            # nächtliches Backup (volle Stunde, lokale Zeit)
+      - BACKUP_KEEP_DAYS=${BACKUP_KEEP_DAYS:-14} # so viele Tages-Backups aufbewahren
+      - BACKUP_KEEP_MANUAL=${BACKUP_KEEP_MANUAL:-10} # je Art (manuell/vor-restore) die neuesten N
+      - TZ=${TZ:-Europe/Berlin}
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - "${HTTPS_PORT:-5443}:443"   # HTTPS: https://<host>:5443 (selbstsigniert via tls internal)
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+    restart: unless-stopped
+
+volumes:
+  dispatcher-data:
+  caddy-data:
