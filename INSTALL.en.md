@@ -61,8 +61,8 @@ Apple Silicon, a Raspberry Pi or ARM servers as well.
 On a machine **with** internet, download the image and save it to a file:
 
 ```bash
-docker pull metromcd/plan-and-dispatch-ai:latest
-docker save metromcd/plan-and-dispatch-ai:latest | gzip > plananddispatch.tar.gz
+docker pull plananddispatchai/plan-and-dispatch-ai:latest
+docker save plananddispatchai/plan-and-dispatch-ai:latest | gzip > plananddispatch.tar.gz
 ```
 
 Copy that file together with the four configuration files to the target server,
@@ -270,7 +270,7 @@ Option B (offline): save the new image to a file on a machine with internet, cop
 it over, then `docker load -i …` and `docker compose up -d --no-build`.
 
 To pin a specific version, set it in the `.env`:
-`IMAGE=metromcd/plan-and-dispatch-ai:2.116`. Without it, `latest` applies.
+`IMAGE=plananddispatchai/plan-and-dispatch-ai:2.116`. Without it, `latest` applies.
 
 The database is migrated automatically on start (additive schema changes only);
 data, session key and backups stay in the volume.

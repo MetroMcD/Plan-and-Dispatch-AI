@@ -6,7 +6,7 @@
 
 services:
   dispatcher:
-    image: ${IMAGE:-metromcd/plan-and-dispatch-ai:latest}
+    image: ${IMAGE:-plananddispatchai/plan-and-dispatch-ai:latest}
     ports:
       - "${HTTP_PORT:-5050}:5050"
     volumes:
@@ -29,7 +29,7 @@ services:
     restart: unless-stopped
 
   backup:
-    image: ${IMAGE:-metromcd/plan-and-dispatch-ai:latest}
+    image: ${IMAGE:-plananddispatchai/plan-and-dispatch-ai:latest}
     command: ["python", "backup.py"]
     healthcheck:
       disable: true   # kein Webserver — der HEALTHCHECK aus dem Image passt hier nicht
