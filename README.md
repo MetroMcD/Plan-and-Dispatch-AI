@@ -1,3 +1,5 @@
+<img src="https://raw.githubusercontent.com/MetroMcD/Plan-and-Dispatch-AI/main/assets/logo.png" alt="Plan and Dispatch AI" width="120" align="right">
+
 # Plan and Dispatch AI
 
 *[English version](README.en.md)*
