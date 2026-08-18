@@ -10,6 +10,16 @@ Ein Major-Sprung kennzeichnet einen größeren Umbau.
 
 ---
 
+## 2.118
+
+### Geändert
+- **Das Abbild liegt jetzt unter `plananddispatchai/plan-and-dispatch-ai`.** Der
+  bisherige Veröffentlichungsname war ein Benutzerkürzel; Docker-Konten lassen
+  sich nicht umbenennen, daher der Wechsel auf ein Konto mit passendem Namen.
+  Wer die Compose-Datei aus dem Release-Paket nutzt, bekommt die Änderung beim
+  nächsten Aktualisieren automatisch — feste Verweise auf den alten Namen bitte
+  einmal anpassen, Docker Hub leitet nicht weiter.
+
 ## 2.117
 
 ### Geändert

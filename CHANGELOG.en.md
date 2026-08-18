@@ -10,6 +10,16 @@ A major bump marks a larger rebuild.
 
 ---
 
+## 2.118
+
+### Changed
+- **The image now lives at `plananddispatchai/plan-and-dispatch-ai`.** The
+  previous publisher name was a personal handle; Docker accounts cannot be
+  renamed, hence the move to an account with a fitting name. If you use the
+  compose file from the release package, the change arrives with your next
+  update — please adjust any hard-coded references to the old name, as Docker
+  Hub does not redirect.
+
 ## 2.117
 
 ### Changed

@@ -17,7 +17,7 @@
 
 services:
   dispatcher:
-    image: ${IMAGE:-metromcd/plan-and-dispatch-ai:latest}
+    image: ${IMAGE:-plananddispatchai/plan-and-dispatch-ai:latest}
     # Bewusst KEIN ports:-Block — nur intern über das Compose-Netz erreichbar.
     volumes:
       - dispatcher-data:/data
@@ -38,7 +38,7 @@ services:
     restart: unless-stopped
 
   backup:
-    image: ${IMAGE:-metromcd/plan-and-dispatch-ai:latest}
+    image: ${IMAGE:-plananddispatchai/plan-and-dispatch-ai:latest}
     command: ["python", "backup.py"]
     healthcheck:
       disable: true
