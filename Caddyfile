@@ -1,0 +1,16 @@
+# TLS-Reverse-Proxy für Plan & Dispatch (HTTPS auf Port 5443).
+# `tls internal` + on_demand stellt selbstsignierte Zertifikate (Caddy-eigene CA)
+# für jeden angefragten Hostnamen aus — Browser warnen einmalig.
+# Für vertrauenswürdige Zertifikate: Hostnamen statt :443 eintragen
+# (z.B. dispatcher.firma.local) und die Caddy-Root-CA im Firmennetz verteilen.
+{
+	local_certs
+	default_sni localhost
+}
+
+:443 {
+	tls internal {
+		on_demand
+	}
+	reverse_proxy dispatcher:5050
+}
