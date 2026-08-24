@@ -14,7 +14,9 @@ volume on your server, and the AI features are optional and can run locally.
 mkdir plan-and-dispatch-ai && cd plan-and-dispatch-ai
 curl -O https://raw.githubusercontent.com/MetroMcD/Plan-and-Dispatch-AI/main/docker-compose.yml
 curl -O https://raw.githubusercontent.com/MetroMcD/Plan-and-Dispatch-AI/main/Caddyfile
-curl -o .env https://raw.githubusercontent.com/MetroMcD/Plan-and-Dispatch-AI/main/.env.example
+curl -o .env.example https://raw.githubusercontent.com/MetroMcD/Plan-and-Dispatch-AI/main/.env.example
+cp .env.example .env
+nano .env          # set ADMIN_PASSWORD — nothing starts without it
 
 # Set ADMIN_PASSWORD in .env — the stack refuses to start without it
 docker compose up -d

@@ -14,7 +14,9 @@ auf Ihrem Server, die KI-Anbindung ist optional und kann lokal laufen.
 mkdir plan-and-dispatch-ai && cd plan-and-dispatch-ai
 curl -O https://raw.githubusercontent.com/MetroMcD/Plan-and-Dispatch-AI/main/docker-compose.yml
 curl -O https://raw.githubusercontent.com/MetroMcD/Plan-and-Dispatch-AI/main/Caddyfile
-curl -o .env https://raw.githubusercontent.com/MetroMcD/Plan-and-Dispatch-AI/main/.env.example
+curl -o .env.example https://raw.githubusercontent.com/MetroMcD/Plan-and-Dispatch-AI/main/.env.example
+cp .env.example .env
+nano .env          # ADMIN_PASSWORD eintragen — ohne den Wert startet nichts
 
 # ADMIN_PASSWORD in der .env setzen — ohne das startet der Stack nicht
 docker compose up -d
