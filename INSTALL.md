@@ -76,7 +76,7 @@ nano .env
 docker compose up -d --no-build
 ```
 
-> Das Caddy-Image (`caddy:2-alpine`) muss offline ebenfalls per
+> Das Caddy-Image (`caddy:2.11.7-alpine`) muss offline ebenfalls per
 > `docker save`/`docker load` mitgebracht werden — oder man lässt den
 > Caddy-Service weg (siehe Abschnitt 5) und nutzt nur HTTP.
 
@@ -92,8 +92,12 @@ Kurz prüfen:
 
 ```bash
 docker compose ps                          # alle drei "running", dispatcher "healthy"
-curl http://localhost:5050/healthz         # → {"status":"ok","version":"…"}
+curl http://localhost:5050/healthz         # → {"status":"ok"}
+docker compose exec dispatcher python -c "import urllib.request;print(urllib.request.urlopen('http://localhost:5050/healthz').read().decode())"
+                                           # → {"status":"ok","version":"…"}
 ```
+
+`/healthz` nennt die Version nur bei einer Abfrage aus dem Container selbst oder für angemeldete Benutzer — nach außen verrät die Instanz ihre Version nicht.
 
 ---
 
@@ -174,7 +178,7 @@ und das Wochenbriefing.
 einen konsistenten SQLite-Dump nach `/data/backups/dispatcher-JJJJ-MM-TT.db`
 im Volume und behält 14 Tages-Stände (einstellbar in der `.env`).
 
-### Der Normalweg: Admin-Bereich → Tab „Datenbank"
+### Der Normalweg: Admin-Bereich → Tab „Datensicherung"
 
 Sichern, herunterladen und **zurücksichern** läuft ohne Server-Zugang direkt in
 der App (Abschnitt 1 „Sicherungen"):
@@ -197,6 +201,36 @@ bewusst anzahl- statt altersbasiert, damit eine Sicherheitskopie nicht nach
 
 ⚠️ Heruntergeladene Sicherungen enthalten den **kompletten** Datenbestand
 inklusive KI-/HubSpot-Tokens im Klartext — entsprechend behandeln (§9).
+
+### Sicherung außer Haus: externer Speicher & Abruf
+
+Eine Sicherung, die nur im selben Volume liegt wie die Datenbank, überlebt keinen
+Serverausfall. Im Tab „Datensicherung" gibt es deshalb zwei Wege (Details und
+Beispiele: Admin-Handbuch, Kapitel 11):
+
+1. **Kopie an einen externen Speicher** — WebDAV (Nextcloud, NAS, Hetzner Storage
+   Box …), S3 (AWS, Backblaze, Wasabi, MinIO …) oder SFTP. Jede neue Sicherung wird
+   automatisch dorthin übertragen; der Verbindungstest und das Ergebnis der letzten
+   Übertragung stehen im Tab. Wahlweise **AES-256-verschlüsselt** (Passphrase,
+   mindestens 8 Zeichen).
+2. **Abruf per Schlüssel** — ein eigener Abruf-Schlüssel erlaubt Ihrem Backup-Programm
+   oder Cronjob, die neueste Sicherung selbst zu holen:
+   `curl -f -H "X-API-Key: …" -OJ https://IHR-SERVER/backup-api/latest`.
+   Ein Abruf-Schlüssel öffnet nichts anderes, und Schnittstellen-Schlüssel öffnen
+   keine Sicherung.
+
+> **OneDrive, Google Drive und Dropbox** werden nicht direkt angebunden (sie
+> verlangen je Installation eine eigene Entwickler-App). Weg dorthin: ein Rechner
+> mit dem jeweiligen Sync-Client holt per Abruf-Schnittstelle, oder das
+> Backup-Volume wird als Ordner eingebunden (`./backups:/data/backups`) und per
+> Sync-Client/`rclone` gespiegelt.
+
+**Verschlüsselte Sicherung zurückspielen:** im Tab „Datensicherung" die `.db.enc`-Datei
+hochladen und die Passphrase eingeben — oder auf dem Server entschlüsseln:
+`docker compose exec dispatcher python offsite.py decrypt /data/backups/x.db.enc /data/backups/x.db`.
+**Ohne die Passphrase ist eine verschlüsselte Sicherung nicht wiederherstellbar** —
+getrennt vom Server aufbewahren. Alte Kopien im externen Speicher werden nicht
+automatisch gelöscht (Aufbewahrungsregel dort einrichten).
 
 ### Rückfall: Kommandozeile
 
@@ -278,7 +312,7 @@ Die Datenbank wird beim Start automatisch migriert (nur additive
 Schema-Änderungen); Daten, Session-Schlüssel und Backups bleiben im Volume
 erhalten. Ein Rollback ist über das nächtliche Backup möglich.
 
-**Empfehlung: vor dem Update eine Sicherung anlegen** — Admin → Datenbank →
+**Empfehlung: vor dem Update eine Sicherung anlegen** — Admin → Datensicherung →
 „Sicherung jetzt erstellen". Das dauert einen Klick und macht den Schritt
 umkehrbar. Ein Rückschritt auf ein **älteres** Image, nachdem die Datenbank
 bereits migriert wurde, ist nicht vorgesehen; in diesem Fall die vor dem Update
@@ -345,6 +379,12 @@ print('Passwort: Neustart123 (Wechsel wird beim Login erzwungen)')"
   gesendet. Standard ist `0`, weil ein Secure-Cookie beim Zugriff über
   `http://<host>:5050` gar nicht erst ankäme — **niemand könnte sich anmelden**.
   Wer parallel http und https anbietet, lässt den Schalter auf `0`.
+- **Optionale Härtung (alle standardmäßig aus bzw. wie bisher):**
+  `TRUSTED_PROXIES` (kommagetrennte IPs/CIDRs der vorgeschalteten Proxys; nur
+  deren `X-Forwarded-For` wird für Anmelde-Sperren und Login-Historie
+  geglaubt), `TRUSTED_HOSTS` (erlaubte Hostnamen; leer = keine Prüfung),
+  `MAX_REQUEST_MB` (globale Obergrenze je Anfrage, Standard 16; Rücksicherung
+  und Excel-Import haben eigene, höhere Grenzen).
 
 ---
 

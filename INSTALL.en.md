@@ -75,7 +75,7 @@ nano .env
 docker compose up -d --no-build
 ```
 
-> The Caddy image (`caddy:2-alpine`) has to be brought along offline via
+> The Caddy image (`caddy:2.11.7-alpine`) has to be brought along offline via
 > `docker save`/`docker load` as well — or leave the Caddy service out (see
 > section 5) and use HTTP only.
 
@@ -91,8 +91,12 @@ Quick check:
 
 ```bash
 docker compose ps                          # all three "running", dispatcher "healthy"
-curl http://localhost:5050/healthz         # → {"status":"ok","version":"…"}
+curl http://localhost:5050/healthz         # → {"status":"ok"}
+docker compose exec dispatcher python -c "import urllib.request;print(urllib.request.urlopen('http://localhost:5050/healthz').read().decode())"
+                                           # → {"status":"ok","version":"…"}
 ```
+
+`/healthz` only reports the version to requests from inside the container or to signed-in users — the instance does not reveal its version to the outside.
 
 ---
 
@@ -173,7 +177,7 @@ assignment, suggestions for next steps and the weekly briefing.
 (02:00 by default) to `/data/backups/dispatcher-YYYY-MM-DD.db` in the volume and
 keeps 14 daily states (configurable in the `.env`).
 
-### The normal route: admin area → "Database" tab
+### The normal route: admin area → "Backup" tab
 
 Creating, downloading and **restoring** backups works inside the app without
 server access (section 1, "Backups"):
@@ -195,6 +199,35 @@ age-based so a safety copy does not vanish after 14 days.
 
 ⚠️ Downloaded backups contain the **complete** dataset including AI and HubSpot
 tokens in clear text — treat them accordingly (section 9).
+
+### Off-site backup: external storage & retrieval
+
+A backup that lives only in the same volume as the database does not survive a
+server failure. The "Backup" tab therefore offers two ways (details and examples:
+admin manual, chapter 11):
+
+1. **Copy to an external storage** — WebDAV (Nextcloud, NAS, Hetzner Storage Box …),
+   S3 (AWS, Backblaze, Wasabi, MinIO …) or SFTP. Every new backup is transferred
+   there automatically; the connection test and the result of the last transfer are
+   shown in the tab. Optionally **AES-256 encrypted** (passphrase, at least
+   8 characters).
+2. **Retrieval by key** — a dedicated retrieval key lets your backup program or cron
+   job fetch the newest backup itself:
+   `curl -f -H "X-API-Key: …" -OJ https://YOUR-SERVER/backup-api/latest`.
+   A retrieval key opens nothing else, and interface keys do not open a backup.
+
+> **OneDrive, Google Drive and Dropbox** are not connected directly (they require
+> your own developer app per installation). Ways there: a machine with the
+> respective sync client fetches via the retrieval interface, or the backup volume
+> is mounted as a folder (`./backups:/data/backups`) and mirrored with a sync
+> client/`rclone`.
+
+**Restoring an encrypted backup:** upload the `.db.enc` file in the "Backup" tab and
+enter the passphrase — or decrypt on the server:
+`docker compose exec dispatcher python offsite.py decrypt /data/backups/x.db.enc /data/backups/x.db`.
+**Without the passphrase an encrypted backup cannot be recovered** — keep it apart
+from the server. Old copies in the external storage are not deleted automatically
+(set up a retention rule there).
 
 ### Fallback: the command line
 
@@ -275,7 +308,7 @@ To pin a specific version, set it in the `.env`:
 The database is migrated automatically on start (additive schema changes only);
 data, session key and backups stay in the volume.
 
-**Recommended: take a backup before updating** — Admin → Database → "Create
+**Recommended: take a backup before updating** — Admin → Backup → "Create
 backup now". It takes one click and makes the step reversible. Going back to an
 **older** image after the database has already been migrated is not supported; in
 that case restore the backup you took before the update.
@@ -342,6 +375,11 @@ print('Password: Restart123 (a change is enforced at login)')"
   never sent over an unencrypted connection. The default is `0`, because a secure
   cookie would never arrive when accessed via `http://<host>:5050` — **nobody
   could sign in**. If you offer both HTTP and HTTPS, leave it at `0`.
+- **Optional hardening (all off or unchanged by default):** `TRUSTED_PROXIES`
+  (comma-separated IPs/CIDRs of upstream proxies; only their `X-Forwarded-For`
+  is trusted for login lockout and login history), `TRUSTED_HOSTS` (allowed
+  host names; empty = no check), `MAX_REQUEST_MB` (global per-request limit,
+  default 16; restore and Excel import have their own higher limits).
 
 ---
 

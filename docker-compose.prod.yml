@@ -29,6 +29,9 @@ services:
       # SESSION_COOKIE_SECURE=1 in der .env empfehlenswert. Der Default bleibt
       # bewusst 0, damit ein Update das Anmeldeverhalten nicht still verändert.
       - SESSION_COOKIE_SECURE=${SESSION_COOKIE_SECURE:-0}
+      - TRUSTED_PROXIES=${TRUSTED_PROXIES:-}
+      - TRUSTED_HOSTS=${TRUSTED_HOSTS:-}
+      - MAX_REQUEST_MB=${MAX_REQUEST_MB:-16}
       # Auch die App legt Sicherungen an (Admin → Datenbank) und räumt dabei auf
       - BACKUP_KEEP_DAYS=${BACKUP_KEEP_DAYS:-14}
       - BACKUP_KEEP_MANUAL=${BACKUP_KEEP_MANUAL:-10}
@@ -52,7 +55,7 @@ services:
     restart: unless-stopped
 
   cloudflared:
-    image: cloudflare/cloudflared:latest
+    image: cloudflare/cloudflared:2026.10.4
     command: ["tunnel", "--no-autoupdate", "run"]
     environment:
       - TUNNEL_TOKEN=${TUNNEL_TOKEN:-}

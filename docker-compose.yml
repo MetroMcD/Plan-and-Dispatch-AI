@@ -19,6 +19,9 @@ services:
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:?bitte in der .env setzen — siehe .env.example}
       # nur einschalten, wenn ausschließlich über https zugegriffen wird (s. .env.example)
       - SESSION_COOKIE_SECURE=${SESSION_COOKIE_SECURE:-0}
+      - TRUSTED_PROXIES=${TRUSTED_PROXIES:-}
+      - TRUSTED_HOSTS=${TRUSTED_HOSTS:-}
+      - MAX_REQUEST_MB=${MAX_REQUEST_MB:-16}
       # Auch die App legt Sicherungen an (Admin → Datenbank) und räumt dabei auf —
       # sie braucht dieselbe Aufbewahrungsregel wie der backup-Service
       - BACKUP_KEEP_DAYS=${BACKUP_KEEP_DAYS:-14}
@@ -43,7 +46,7 @@ services:
     restart: unless-stopped
 
   caddy:
-    image: caddy:2-alpine
+    image: caddy:2.11.7-alpine
     ports:
       - "${HTTPS_PORT:-5443}:443"   # HTTPS: https://<host>:5443 (selbstsigniert via tls internal)
     volumes:
