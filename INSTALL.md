@@ -5,7 +5,7 @@
 **Die Änderungen je Version stehen in `CHANGELOG.md`.**
 
 Aufgaben-Dispatching-Board für Sage-100-Beratungsteams: Kanban-Board pro
-Mitarbeiter, KI-gestützte Klassifizierung und Aufwandsschätzung,
+Mitarbeiter, AI-gestützte Klassifizierung und Aufwandsschätzung,
 kapazitätsbewusstes Auto-Dispatching, Auslastungssicht, Projektplan,
 Soll/Ist-Vergleich mit Zeiterfassung, Unteraufgaben, interner
 Ticket-Nummernkreis, ERP-/Ticketsystem-Anbindung (Push-API + HubSpot-Konnektor).
@@ -22,7 +22,7 @@ Firmennetz — von null bis zum ersten Login in ca. 10 Minuten.
 | Server | Linux, Windows (WSL2) oder macOS; 1 CPU-Kern, 1 GB RAM, 2 GB Disk genügen |
 | Docker | Docker Engine **24+** mit Compose-Plugin (`docker compose version` muss funktionieren) |
 | Netzwerk | Zwei freie Ports, Standard: **5050** (HTTP) und **5443** (HTTPS) |
-| Optional | Ein KI-Endpunkt: LM Studio / Ollama / OpenAI / Azure / Anthropic — die App läuft auch komplett ohne KI (Keyword-Fallback) |
+| Optional | Ein AI-Endpunkt: LM Studio / Ollama / OpenAI / Azure / Anthropic — die App läuft auch komplett ohne AI (Keyword-Fallback) |
 
 Alle Daten (SQLite-Datenbank, Session-Schlüssel, Backups) liegen im
 Docker-Volume `dispatcher-data` — kein externer Datenbankserver nötig.
@@ -109,7 +109,7 @@ docker compose exec dispatcher python -c "import urllib.request;print(urllib.req
    Passwortwechsel — auch serverseitig, das lässt sich nicht überspringen.
 3. **Admin-Bereich** (☰-Menü → Admin-Bereich) durchgehen, sinnvolle Reihenfolge:
    1. **Mitarbeiter** — Spalten des Boards: Name, E-Mail, Farbe, Skills (Freitext
-      für die KI), Skill-Tags (kommagetrennt, fürs Auto-Dispatching),
+      für die AI), Skill-Tags (kommagetrennt, fürs Auto-Dispatching),
       Wochenstunden + Puffer % (für Kapazitätsprüfung und Auslastungssicht),
       CRM/ERP-Benutzername (für die automatische Zuordnung beim Ticket-Import).
    2. **Benutzer** — Logins für das Team anlegen (Admin-Haken nur wo nötig).
@@ -119,9 +119,9 @@ docker compose exec dispatcher python -c "import urllib.request;print(urllib.req
    3. **Teams & Standorte** — optional: Team-Filter im Board, Teamfarben/-logos,
       Erscheinungsbild (Firmenfarbe + Logo für Header und Excel-Exporte),
       Budgetprüfungs-Schwelle der Zeiterfassung.
-   4. **KI-Einstellungen** — siehe Abschnitt 4.
+   4. **AI-Einstellungen** — siehe Abschnitt 4.
    5. **Meilenstein-Vorlage** — das Phasenmodell, das jedes neue Projekt
-      automatisch bekommt (Namen, Beschreibungen, KI-Stichwörter) — Defaults
+      automatisch bekommt (Namen, Beschreibungen, AI-Stichwörter) — Defaults
       passen für den Start.
    6. **Einstellungen** — interner Ticket-Nummernkreis für den Betrieb **ohne**
       externes Ticketsystem: eigene fortlaufende Ticketnummern mit Startnummer,
@@ -134,16 +134,16 @@ docker compose exec dispatcher python -c "import urllib.request;print(urllib.req
 
 ---
 
-## 4. KI anbinden (optional, aber der eigentliche Mehrwert)
+## 4. AI anbinden (optional, aber der eigentliche Mehrwert)
 
-Admin-Bereich → **KI-Einstellungen**. Die Konfiguration liegt in der
+Admin-Bereich → **AI-Einstellungen**. Die Konfiguration liegt in der
 Datenbank und gilt global — keine Container-Neustarts nötig.
 
 | Einstellung | Beispiele |
 |---|---|
 | Provider `openai` (OpenAI-kompatibel) | LM Studio, Ollama, vLLM, OpenAI, Azure OpenAI |
 | Provider `anthropic` | Claude-API (Modellname ist dann Pflicht) |
-| Provider `disabled` | Keine KI — App nutzt Keyword-Fallback |
+| Provider `disabled` | Keine AI — App nutzt Keyword-Fallback |
 
 Typische Setups:
 
@@ -153,7 +153,7 @@ Typische Setups:
 - **OpenAI:** Base-URL `https://api.openai.com/v1` + API-Key + Modell.
 - **Anthropic:** Base-URL leer lassen + API-Key + Modell (z. B. `claude-sonnet-5`).
 
-Mit **„Verbindung testen"** prüfen. Die KI übernimmt dann: Klassifizierung
+Mit **„Verbindung testen"** prüfen. Die AI übernimmt dann: Klassifizierung
 neuer Aufgaben (Mitarbeiter-Zuordnung mit Kapazitätsprüfung),
 Aufwandsschätzung, Meilenstein-Zuordnung, Vorschläge für nächste Schritte
 und das Wochenbriefing.
@@ -200,7 +200,7 @@ bewusst anzahl- statt altersbasiert, damit eine Sicherheitskopie nicht nach
 14 Tagen verschwindet.
 
 ⚠️ Heruntergeladene Sicherungen enthalten den **kompletten** Datenbestand
-inklusive KI-/HubSpot-Tokens im Klartext — entsprechend behandeln (§9).
+inklusive AI-/HubSpot-Tokens im Klartext — entsprechend behandeln (§9).
 
 ### Sicherung außer Haus: externer Speicher & Abruf
 
@@ -335,7 +335,7 @@ einbindet, muss ihm einmal den passenden Besitzer geben:
 |---|---|
 | Port 5050/5443 belegt | In der `.env` `HTTP_PORT`/`HTTPS_PORT` ändern, `docker compose up -d` |
 | `docker compose ps` zeigt `unhealthy` | `docker compose logs dispatcher --tail 50` — häufigste Ursache: beschädigtes Volume oder voller Datenträger |
-| KI-Test schlägt fehl (LM Studio) | LM Studio: „Serve on Local Network" aktivieren; vom Host testen: `curl http://localhost:1234/v1/models` |
+| AI-Test schlägt fehl (LM Studio) | LM Studio: „Serve on Local Network" aktivieren; vom Host testen: `curl http://localhost:1234/v1/models` |
 | Login gesperrt („Zu viele Fehlversuche") | 5 Minuten warten — oder `docker compose restart dispatcher` (setzt die Sperren zurück) |
 | Admin-Passwort vergessen | Siehe Kasten unten |
 | Browser warnt vor Zertifikat | Erwartet bei `tls internal` — Ausnahme bestätigen oder Caddy-Root-CA verteilen (Abschnitt 5) |
@@ -371,7 +371,7 @@ print('Passwort: Neustart123 (Wechsel wird beim Login erzwungen)')"
   nicht als root; der Programmcode im Container ist für sie nur lesbar
 - Empfehlung fürs Firmennetz: HTTPS (Port 5443) verwenden; HTTP nur, wenn
   das LAN als vertrauenswürdig gilt. Die nächtlichen Backups im Volume
-  enthalten die komplette Datenbank (inkl. KI-/HubSpot-Token) — Kopien
+  enthalten die komplette Datenbank (inkl. AI-/HubSpot-Token) — Kopien
   entsprechend schützen.
 - **`SESSION_COOKIE_SECURE=1`** in der `.env` setzen, sobald die App
   ausschließlich über https erreichbar ist (Reverse-Proxy, Cloudflare Tunnel).

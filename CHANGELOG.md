@@ -4,6 +4,176 @@
 
 ---
 
+## 2.185
+
+### Geändert
+- „Neue Aufgabe“-Knopf links neben „Board“ in der Kopfleiste
+
+## 2.184
+
+### Neu
+- Benutzereinstellungen: angemeldeter Benutzer und verbundener Mitarbeiter im Profil
+
+## 2.183
+
+### Geändert
+- Benutzereinstellungen: Menü links in der grauen Fläche
+- Änderungsanträge für Fähigkeiten (Antrag, Glocke, Admin-Bestätigung)
+
+## 2.182
+
+### Geändert
+- Admin-Bereich: Navigation links in der grauen Fläche mit Abschnitten
+
+## 2.181
+
+### Geändert
+- Logo oben links führt überall zurück zum Board
+- Admin-Bereich mit derselben Kopfleiste wie das Board
+
+---
+
+## 2.180
+
+### Geändert
+- Auslastungssicht: Zellen füllen sich von unten, Farbskala von gelb über grün und orange bis rot
+
+---
+
+## 2.179
+
+### Sicherheit
+- Prompt-Injection-Schutz: gehärtete Daten-Kapselung
+- Eigene Fähigkeiten werden geprüft und als Daten übergeben
+
+---
+
+## 2.178
+
+### Geändert
+- Archiv nimmt nur erledigte Aufgaben
+- Erledigte Aufgaben abgeschlossener Projekte werden nach 8 Wochen automatisch archiviert
+
+---
+
+## 2.177
+
+### Neu
+- KI-Schutz gegen untergeschobene Anweisungen (Prompt-Injection)
+- Einstellbar im Admin-Bereich
+
+---
+
+## 2.176
+
+### Neu
+- Hilfe bei jedem Dialog, F1 und ? als Tasten
+- Hilfe neben dem Dialog statt darüber
+- Schnittstellen-Doku auf Englisch
+
+### Geändert
+- Ein Einstieg für die Hilfe, Tastenkürzel & Legende neu benannt
+- Online-Hilfe mit Inhaltsverzeichnis
+
+### Behoben
+- Hilfe per Tastatur bei offenem Dialog bedienbar
+
+## 2.175
+
+### Neu
+- Spaltengruppen verschieben
+- Treffer in zugeklappten Gruppen
+- Gruppierung im Menü, Alle ein- und ausklappen
+
+### Geändert
+- Schmale Gruppenleisten zeigen Auslastung in Prozent
+
+## 2.174
+
+### Neu
+- Profilbilder
+- Eigene Fähigkeiten ergänzen
+
+## 2.173
+
+### Neu
+- Board: Spaltengruppierung ein-/ausschaltbar
+- Alle Spaltengruppen auf einmal auf-/zuklappen
+
+### Geändert
+- Zugeklappte Gruppen besser lesbar
+- Eigenes Spalten-Layout bleibt bei Gruppierung erhalten
+
+## 2.172
+
+### Neu
+- Board: einklappbare Spaltengruppen nach Team oder Standort
+- Aufgabendialog: verbundene Aufgaben als Sprung-Kacheln
+
+### Geändert
+- Unteraufgaben folgen der Sichtbarkeit
+
+## 2.171
+
+### Neu
+- Auslastung: Drilldown auf Aufgaben je Mitarbeiter und Woche
+- API-Schlüssel mit Verwendung (ERP, MCP lesen, MCP schreiben)
+
+### Geändert
+- Auslastung ruhiger gestaltet
+- Passwort-Richtlinie
+- Sicherheitshärtung
+
+## 2.170
+
+### Neu
+- Sichtbarkeitsstufen je Team und Benutzer (eigene / Team / Teams / alle)
+- Zuweisungsrechte: aus dem Eingang nehmen, von Kollegen nehmen, an Kollegen abgeben
+- Rechte im Team und teamübergreifend getrennt einstellbar
+
+### Geändert
+- Umhängen zwischen zwei anderen Personen nur noch für Planer
+
+## 2.169
+
+### Neu
+- Ansichten-Umschalter mit sichtbarer aktiver Ansicht, inkl. Birdview
+- Ansicht in der Adresse (Zurück-Taste, Neuladen, Links)
+- Befehlspalette Strg/⌘+K (Ansichten, Funktionen, Aufgaben)
+- Werkzeugmenü gruppiert, Konto-Menü hinter den Initialen
+
+### Behoben
+- Birdview lag dauerhaft unter dem Board
+- Verkettung im Aufgabendialog nach erstem Öffnen leer
+
+## 2.168
+
+### Neu
+- Birdview-Übersicht (Management): Kennzahlen, kritische Themen, Projekte
+- Drill-down bis zum Ticket, Filter Team/Standort/Mitarbeiter
+- Excel-Export der Birdview
+- Eigenes Zusatzrecht „Birdview-Übersicht" (Admin)
+
+## 2.167
+
+### Neu
+- Aufgabenverkettung (Vorgänger/Nachfolger, N:N)
+- „Wartet auf"-Anzeige und Warnung bei offenen Vorgängern
+- Folgetermine verschieben (mit Vorschau)
+- Projektrisiko und Glocke berücksichtigen Verkettung
+
+## 2.166
+
+### Neu
+- Go-Live und Wunsch-Go-Live am Projekt
+- Fristen aus dem Go-Live ableiten (mit Vorschau)
+- Go-Live-Risiko in Projektplan und Board
+- Basisplan, Abweichung und Go-Live-Meldungen
+- Projektfortschritt Ist gegen Plan
+
+### Geändert
+- Projektplan-Export mit Go-Live und Risiko
+
 ## 2.165
 
 ### Neu

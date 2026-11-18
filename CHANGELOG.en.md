@@ -4,6 +4,178 @@
 
 ---
 
+## 2.185
+
+### Changed
+- “New task” button left of “Board” in the header
+
+## 2.184
+
+### New
+- User settings: signed-in user and linked employee shown in the profile
+
+## 2.183
+
+### Changed
+- User settings: menu on the left in the grey panel
+- Skills change requests (request, bell, admin confirmation)
+
+## 2.182
+
+### Changed
+- Admin area: navigation on the left in the grey panel, with sections
+
+---
+
+## 2.181
+
+### Changed
+- Logo in the top left takes you back to the board from anywhere
+- Admin area uses the same header as the board
+
+---
+
+## 2.180
+
+### Changed
+- Workload view: cells fill from the bottom, colour scale from yellow through green and orange to red
+
+---
+
+## 2.179
+
+### Security
+- Prompt-injection protection: hardened data fencing
+- Self-entered skills are checked and passed to the AI as data
+
+---
+
+## 2.178
+
+### Changed
+- Archive takes only done tasks
+- Done tasks of completed projects are archived automatically after 8 weeks
+
+---
+
+## 2.177
+
+### New
+- AI protection against slipped-in instructions (prompt injection)
+- Configurable in the admin area
+
+---
+
+## 2.176
+
+### New
+- Help at every dialog, F1 and ? as keys
+- Help beside the dialog instead of over it
+- Interface documentation in English
+
+### Changed
+- One entry point for help; keyboard shortcuts & legend renamed
+- Online help with table of contents
+
+### Fixed
+- Help usable by keyboard while a dialog is open
+
+## 2.175
+
+### New
+- Move column groups
+- Hits in collapsed groups
+- Grouping in the menu, collapse and expand all
+
+### Changed
+- Narrow group bars show workload in percent
+
+## 2.174
+
+### New
+- Profile pictures
+- Add your own skills
+
+## 2.173
+
+### New
+- Board: column grouping can be switched on/off
+- Expand/collapse all column groups at once
+
+### Changed
+- Collapsed groups easier to read
+- Own column layout kept when grouping
+
+## 2.172
+
+### New
+- Board: collapsible column groups by team or location
+- Task dialog: related tasks as jump tiles
+
+### Changed
+- Subtasks follow visibility
+
+## 2.171
+
+### New
+- Workload: drilldown to tasks per employee and week
+- API keys with a purpose (ERP, MCP read, MCP write)
+
+### Changed
+- Calmer workload design
+- Password policy
+- Security hardening
+
+## 2.170
+
+### New
+- Visibility levels per team and user (own / team / teams / everyone)
+- Assignment rights: take from inbox, take from colleagues, hand over to colleagues
+- Rights configurable within the team and across teams
+
+### Changed
+- Moving tasks between two other people is reserved for planners
+
+## 2.169
+
+### New
+- View switcher with visible active view, incl. Birdview
+- View in the address (back button, reload, links)
+- Command palette Ctrl/⌘+K (views, functions, tasks)
+- Grouped tools menu, account menu behind the initials
+
+### Fixed
+- Birdview sat permanently below the board
+- Task dependencies empty after first dialog opening
+
+## 2.168
+
+### New
+- Birdview management overview: key figures, critical topics, projects
+- Drill-down down to the ticket, filters team/location/employee
+- Excel export of the Birdview
+- Separate permission "Birdview overview" (admin)
+
+## 2.167
+
+### New
+- Task dependencies (predecessors/successors, N:N)
+- "Waits for" indicator and warning on open predecessors
+- Move follow-up dates (with preview)
+- Project risk and bell take dependencies into account
+
+## 2.166
+
+### New
+- Go-live and requested go-live per project
+- Deadlines derived from the go-live (with preview)
+- Go-live risk in project plan and board
+- Baseline, deviation and go-live notifications
+- Project progress, actual vs. plan
+
+### Changed
+- Project plan export with go-live and risk
+
 ## 2.165
 
 ### New
